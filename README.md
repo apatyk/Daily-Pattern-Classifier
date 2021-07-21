@@ -40,4 +40,8 @@ Code can be found at [https://github.com/apatyk/Daily-Pattern-Classifier](https:
 
 This project requires the following:
 - Python 3.8.3
-- TensorFlow 2.2.0
+- [TensorFlow 2.2.0](https://www.tensorflow.org/versions/r2.2/api_docs/python/tf)
+- NumPy 1.19.5
+- Pandas 1.1.1
+- [tqdm 4.61.2](https://tqdm.github.io)
+- scikit-learn 0.23.2
