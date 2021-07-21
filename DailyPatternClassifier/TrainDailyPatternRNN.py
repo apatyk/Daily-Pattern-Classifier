@@ -26,10 +26,8 @@ k = 5
 epochs = int(sys.argv[3]) #30
 batch_size = int(sys.argv[1]) #64
 num_units = int(sys.argv[2]) #16
-model_path = f'models/daily-pattern-gru-b{batch_size}-u{num_units}-e{epochs}.h5'
 num_subjects = 354
 n_timesteps = len_threshold
-save_data = True
 
 # load numpy arrays from binary .npy files (created from .txt samples in LoadFiles script)
 raw_samples = np.load('200k-samples-W6/daily-samples.npy', allow_pickle=True)
@@ -51,10 +49,11 @@ subjects = np.array(random.sample(x, num_subjects), copy=False)
 total_TPR, total_TNR, total_F1, total_Prec, total_WAcc = [], [], [], [], []
 total_ep_TPR, total_ep_F1, total_ep_FP_TP = [], [], []
 
-print(f'Training with batch_size = {batch_size}, units = {num_units}', flush=True)
+print(f'Training with batch_size = {batch_size}, units = {num_units}')
 for i, (training_subjects, testing_subjects) in enumerate(kfold.split(subjects)):
     ### TRAINING
     print(f'FOLD {i+1}') 
+    model_path = f'models/daily-pattern-b{batch_size}-u{num_units}-e{epochs}-fold{i+1}.h5'
     # retrieve only samples/labels corresponding to training fold
     print('Training...')
     training_bool = np.isin(all_filenames, training_subjects)
@@ -91,8 +90,6 @@ for i, (training_subjects, testing_subjects) in enumerate(kfold.split(subjects))
     
     ### TESTING
     print('Testing...')
-    total_TP, total_FP, total_TN, total_FN = 0, 0, 0, 0
-    total_ep_TP, total_ep_FP, total_ep_FN = 0, 0, 0
 
     # retrieve only samples/labels corresponding to testing fold
     testing_bool = np.isin(all_filenames, testing_subjects)
@@ -107,63 +104,11 @@ for i, (training_subjects, testing_subjects) in enumerate(kfold.split(subjects))
     model = tf.keras.models.load_model(model_path)
     testing_probs = model.predict(testing_samples, batch_size=4096)
     
-    # save data for testing post-hoc (varying thresholds)
-    if save_data: 
-        np.save(f'testing/testing_lengths_{epochs}epochs_fold{i+1}.npy', testing_sample_lengths)
-        np.save(f'testing/testing_probs_{epochs}epochs_fold{i+1}.npy', testing_probs)
-        np.save(f'testing/testing_samples_{epochs}epochs_fold{i+1}.npy', tf.squeeze(testing_samples).numpy())
-        np.save(f'testing/testing_labels_{epochs}epochs_fold{i+1}.npy', tf.squeeze(testing_labels).numpy())
-
-    # get episode metrics on testing dataset
-    for i in range(len(testing_labels)):
-        probs = testing_probs[i,:testing_sample_lengths[i]]
-        gt_labels = testing_labels[i,:testing_sample_lengths[i]]
-        # thresholding segmentation
-        results = testing.single_threshold(probs, gt_labels, winmin=6, stepsec=100, threshold=0.1)
-        # time-based metrics
-        TN, FP, FN, TP = sklearn.metrics.confusion_matrix(gt_labels, results['predictions'][0], labels=[0,1]).ravel()
-        total_TP += TP
-        total_FP += FP
-        total_TN += TN
-        total_FN += FN
-        # episode-based metrics
-        ep_TP, ep_FP, ep_FN = testing.calc_episode_metrics(results, gt_labels)
-        total_ep_TP += ep_TP
-        total_ep_FP += ep_FP
-        total_ep_FN += ep_FN
-
-    # calculate and report overall metrics
-    TPR = testing.true_positive_rate(total_TP, total_FN)
-    TNR = testing.true_negative_rate(total_TN, total_FP)
-    F1 = testing.f1_score(total_TP, total_FP, total_FN)
-    Prec = testing.precision(total_TP, total_FP)
-    WAcc = testing.weighted_accuracy(total_TP, total_FP, total_TN, total_FN)
-
-    print('--- Time Metrics ---')
-    print(f'WAcc: {WAcc:.3f}\tTPR: {TPR:.3f}\tTNR: {TNR:.3f}\tF1: {F1:.3f}\tPrecision: {Prec:.3f}')
-
-    ep_TPR = testing.true_positive_rate(total_ep_TP, total_ep_FN)
-    ep_F1 = testing.f1_score(total_ep_TP, total_ep_FP, total_ep_FN)
-    ep_FP_TP = total_ep_FP / total_ep_TP
-
-    print('--- Episode Metrics ---')
-    print(f'TPR: {ep_TPR:.3f}\tF1: {ep_F1:.3f}\tFP/TP: {ep_FP_TP:.3f}')
-    
-    total_TPR.append(TPR)
-    total_TNR.append(TNR)
-    total_F1.append(F1)
-    total_Prec.append(Prec)
-    total_WAcc.append(WAcc)
-    total_ep_TPR.append(ep_TPR)
-    total_ep_F1.append(ep_F1)
-    total_ep_FP_TP.append(ep_FP_TP)
+    # save data for post-hoc evaluation
+    np.save(f'testing/testing_lengths_{epochs}epochs_fold{i+1}.npy', testing_sample_lengths)
+    np.save(f'testing/testing_probs_{epochs}epochs_fold{i+1}.npy', testing_probs)
+    np.save(f'testing/testing_samples_{epochs}epochs_fold{i+1}.npy', tf.squeeze(testing_samples).numpy())
+    np.save(f'testing/testing_labels_{epochs}epochs_fold{i+1}.npy', tf.squeeze(testing_labels).numpy())
     
     del model
-    print("*****************************************************************", flush=True)
-
-print('AVERAGE:')
-print('--- Time Metrics ---')
-print(f'WAcc: {np.mean(total_WAcc):.3f}\tTPR: {np.mean(total_TPR):.3f}\tTNR: {np.mean(total_TNR):.3f}\tF1: {np.mean(total_F1):.3f}\tPrecision: {np.mean(total_Prec):.3f}')
-
-print('--- Episode Metrics ---')
-print(f'TPR: {np.mean(total_ep_TPR):.3f}\tF1: {np.mean(total_ep_F1):.3f}\tFP/TP: {np.mean(total_ep_FP_TP):.3f}')
+    print("*****************************************************************")

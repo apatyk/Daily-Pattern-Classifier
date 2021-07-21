@@ -22,7 +22,7 @@ for T in thresholds:
 
     for f in range(k):
         print(f'Fold {f+1}', flush=True)
-        # read data from DailyPatternRNN scripts with save_data=True
+        # read saved data from DailyPatternRNN scripts
         testing_sample_lengths = np.load(f'testing/{epochs}epochs/testing_lengths_{epochs}epochs_fold{f+1}.npy')
         testing_probs = np.load(f'testing/{epochs}epochs/testing_probs_{epochs}epochs_fold{f+1}.npy')
         testing_labels = np.load(f'testing/{epochs}epochs/testing_labels_{epochs}epochs_fold{f+1}.npy')
