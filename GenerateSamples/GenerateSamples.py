@@ -1,7 +1,15 @@
-# updated for TensorFlow 2.2.0
+# Adam Patyk
+# Clemson University
+# MS Thesis: Daily Pattern Classifier
+# Summer 2021
+
+# GenerateSamples.py
+# Purpose: Generates daily samples for data augmentation
+# Usage: python GenerateSamples.py <window_length_minutes>
+
 import sys
 import os
-import tensorflow as tf
+import tensorflow as tf # updated for TensorFlow 2.2.0
 import numpy as np
 import math
 from datetime import datetime

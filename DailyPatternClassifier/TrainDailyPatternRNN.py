@@ -1,11 +1,19 @@
+# Adam Patyk
+# Clemson University
+# MS Thesis: Daily Pattern Classifier
+# Summer 2021
+
+# TrainDailyPatternRNN.py
+# Purpose: Trains daily pattern classifiers for k-fold cross validation
+#          Used with TestDailyPatternRNN for evaluation
+# Usage: python TrainDailyPatternRNN.py <batch_size> <num_recurrent_units> <num_training_epochs>
+
 import sys
 import random
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.preprocessing.sequence import pad_sequences 
-import sklearn
 from sklearn.model_selection import KFold
-from datetime import datetime
 
 sys.path.append('../') # for .py files in ../common/
 import common.testing as testing

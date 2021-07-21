@@ -5,8 +5,8 @@ import os
 #PBS -l select=1:ncpus=40:mem=370gb:ngpus=2:gpu_model=v100:interconnect=hdr,walltime=72:00:00
 #PBS -l select=1:ncpus=56:mem=370gb:ngpus=2:gpu_model=v100s:interconnect=hdr,walltime=72:00:00
 
-#window_lengths = [2, 4, 6, 8, 10]
-window_lengths = [6]
+window_lengths = [2, 4, 6, 8, 10]
+#window_lengths = [6]
 
 for W in window_lengths:
 

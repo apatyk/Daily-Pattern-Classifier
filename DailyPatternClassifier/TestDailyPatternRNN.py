@@ -1,3 +1,12 @@
+# Adam Patyk
+# Clemson University
+# MS Thesis: Daily Pattern Classifier
+# Summer 2021
+
+# TestDailyPatternRNN.py
+# Purpose: Evaluate time and episode metrics of daily pattern classifier for k-fold cross validation
+# Usage: python TestDailyPatternRNN.py <threshold_val_start> <threshold_val_end> <threshold_val_step>
+
 import sys
 import numpy as np
 import pandas as pd
@@ -8,7 +17,7 @@ from datetime import datetime
 sys.path.append('../') # for .py files in ../common/
 import common.testing as testing
 
-thresholds = np.arange(0.01, 0.1, 0.01)
+thresholds = np.arange(float(sys.argv[1]), float(sys.argv[2]),float(sys.argv[3]))
 k = 5
 epochs = 50
 
