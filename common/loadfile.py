@@ -47,7 +47,7 @@ def loadEvents(filename):
     """
     # Load the meals file to get any triaged meals.
     SkippedMeals = []
-    mealsfile = open("meals-shimmer.txt", "r") 
+    mealsfile = open("../common/meals-shimmer.txt", "r") 
     for line in mealsfile:
         #print(line)
         data = line.split()
@@ -124,7 +124,7 @@ def loadAllData3(winlength, step, removerest=1, removewalk=0, removebias=1, shx=
     AllIndices = []
     totaleatingrest = 0
     totaleatingwalk = 0
-    df = pd.read_csv('batch-unix.txt', names=["Filenames"])
+    df = pd.read_csv('../common/batch-unix.txt', names=["Filenames"])
     for x in tqdm(range(len(df["Filenames"]))):
         fileeatingrest = 0
         fileeatingwalk = 0
@@ -386,7 +386,7 @@ def loadSingleData(filenum, winlength, step, removerest=1, removewalk=0, removeb
     AllIndices = []
     totaleatingrest = 0
     totaleatingwalk = 0
-    df = pd.read_csv('batch-unix.txt', names=["Filenames"])
+    df = pd.read_csv('../common/batch-unix.txt', names=["Filenames"])
     x = filenum
     fileeatingrest = 0
     fileeatingwalk = 0

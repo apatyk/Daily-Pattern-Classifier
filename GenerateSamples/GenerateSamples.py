@@ -51,7 +51,7 @@ num_files, all_training_data, training_samples_array, training_labels_array = lo
                                                                                                     removebias=1)
 
 # load the dataset for testing with a different stride and GT labeling (center point)
-all_testing_data, testing_samples_array, testing_labels_array = loadfile.loadAllDataTesting('batch-unix.txt', 
+all_testing_data, testing_samples_array, testing_labels_array = loadfile.loadAllDataTesting('../common/batch-unix.txt', 
                                                                                               win_len, 
                                                                                               test_step, 
                                                                                               removebias=1)
