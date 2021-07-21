@@ -1,1 +1,1 @@
-# Daily-Pattern-Classifier
+# Daily Pattern Classifier
