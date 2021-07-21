@@ -1,5 +1,21 @@
 # Daily Pattern Classifier
+### Adam Patyk
 ---
+
+## Overview
+
+This code is from M.S. research in applying deep learning and recurrent neural networks to eating detection. The M.S. thesis that accompanies this research can be found here, ["Detecting eating episodes from daily patterns of wrist motion using recurrent neural networks"](http://cecas.clemson.edu/~ahoover/theses/patyk-thesis.pdf). The Clemson All-Day (CAD) dataset used in this project is [publicly available](http://cecas.clemson.edu/~ahoover/allday/).
+
+## Requirements
+
+This project requires the following:
+- Python 3.8.3
+- [TensorFlow 2.2.0](https://www.tensorflow.org/versions/r2.2/api_docs/python/tf)
+- NumPy 1.19.5
+- Pandas 1.1.1
+- [tqdm 4.61.2](https://tqdm.github.io)
+- scikit-learn 0.23.2
+
 ## Repository Structure
 
     common/                     // directory for scripts and text files used by other programs
@@ -35,13 +51,3 @@ Code can be found at [https://github.com/apatyk/Daily-Pattern-Classifier](https:
 8. **`TestDailyPatternRNN.py`:** This Python program evaluates time and episode metrics post-hoc for k-fold cross validation and saves the results to a CSV file. Varying thresholds can be used for thresholding eating episode segmentation.
 9. **`SubmitTrainRNNJob.py`:** This Python script creates a PBS script to submit a TrainDailyPatternRNN job to the Palmetto cluster.
 10. **`DailyPatternRNN.ipynb`:** This Jupyter notebook trains AND tests daily pattern classifiers with k-fold cross validation. This notebook performs the functions of `TrainDailyPatternRNN` and `TestDailyPatternRNN` together at a fixed post-processing threshold.
-
-## Requirements
-
-This project requires the following:
-- Python 3.8.3
-- [TensorFlow 2.2.0](https://www.tensorflow.org/versions/r2.2/api_docs/python/tf)
-- NumPy 1.19.5
-- Pandas 1.1.1
-- [tqdm 4.61.2](https://tqdm.github.io)
-- scikit-learn 0.23.2
