@@ -1,5 +1,4 @@
 # Daily Pattern Classifier
-### Adam Patyk
 ---
 
 ## Overview
