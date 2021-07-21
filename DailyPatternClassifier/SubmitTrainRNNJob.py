@@ -6,7 +6,7 @@ import numpy as np
 
 batch_size = 64
 num_units = 16
-epochs = 100
+epochs = 50
 
 pbsfile = open("job.pbs", "w")
 
