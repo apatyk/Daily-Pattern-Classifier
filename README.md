@@ -17,8 +17,10 @@
 
     DailyPatternClassifier/     // code to train and evaluate the daily pattern classifier
         DailyPatternRNN.ipynb   // performs 5-fold cross validation for training AND testing (Jupyter notebook)
-        DailyPatternRNN.py      // performs 5-fold cross validation for training (Python script)
-        SubmitTrainRNNJob.py    // script to run DailyPatternRNN on Palmetto cluster as a PBS job
-        ThresholdTesting.py     // evaluates metrics post-hoc 
+        TrainDailyPatternRNN.py // performs training for 5-fold cross validation
+        TestDailyPatternRNN.py  // evaluates time and episode metrics post-hoc for 5-fold cross validation
+        SubmitTrainRNNJob.py    // script to run TrainDailyPatternRNN on Palmetto cluster as a PBS job
         
-## Project Overview
+## Code Description
+
+1. 
