@@ -5,9 +5,10 @@
 
 # TestDailyPatternRNN.py
 # Purpose: Evaluate time and episode metrics of daily pattern classifier for k-fold cross validation
-# Usage: python TestDailyPatternRNN.py <threshold_val_start> <threshold_val_end> <threshold_val_step>
+# Usage: python TestDailyPatternRNN.py <threshold_val_start> <threshold_val_end> <threshold_val_step> <num_epochs>
 
 import sys
+import os
 import numpy as np
 import pandas as pd
 import sklearn.metrics
@@ -17,9 +18,12 @@ from datetime import datetime
 sys.path.append('../') # for .py files in ../common/
 import common.testing as testing
 
+if len(sys.argv) != 5:
+    sys.exit("Usage: python TestDailyPatternRNN.py <threshold_start> <threshold_end> <threshold_step> <num_epochs>")  
+
 thresholds = np.arange(float(sys.argv[1]), float(sys.argv[2]),float(sys.argv[3]))
 k = 5
-epochs = 50
+epochs = int(sys.argv[4])
 
 results = []
 start_time = datetime.now()
@@ -32,9 +36,9 @@ for T in thresholds:
     for f in range(k):
         print(f'Fold {f+1}', flush=True)
         # read saved data from DailyPatternRNN scripts
-        testing_sample_lengths = np.load(f'testing/{epochs}epochs/testing_lengths_{epochs}epochs_fold{f+1}.npy')
-        testing_probs = np.load(f'testing/{epochs}epochs/testing_probs_{epochs}epochs_fold{f+1}.npy')
-        testing_labels = np.load(f'testing/{epochs}epochs/testing_labels_{epochs}epochs_fold{f+1}.npy')
+        testing_sample_lengths = np.load(f'testing/testing_lengths_{epochs}epochs_fold{f+1}.npy')
+        testing_probs = np.load(f'testing/testing_probs_{epochs}epochs_fold{f+1}.npy')
+        testing_labels = np.load(f'testing/testing_labels_{epochs}epochs_fold{f+1}.npy')
         
         total_TP, total_FP, total_TN, total_FN = 0, 0, 0, 0
         total_ep_TP, total_ep_FP, total_ep_FN = 0, 0, 0
@@ -66,7 +70,7 @@ for T in thresholds:
         
         ep_TPR = testing.true_positive_rate(total_ep_TP, total_ep_FN)
         ep_F1 = testing.f1_score(total_ep_TP, total_ep_FP, total_ep_FN)
-        ep_FP_TP = total_ep_FP / total_ep_TP
+        ep_FP_TP = -1 if total_ep_TP == 0 else total_ep_FP / total_ep_TP
 
         total_TPR.append(TPR)
         total_TNR.append(TNR)
@@ -90,9 +94,10 @@ for T in thresholds:
     print("*****************************************************************", flush=True)
     
 # prepare .csv file for export
+os.makedirs('results', exist_ok=True)
 results_df = pd.DataFrame(results)
 results_df.insert(0, 'Threshold', thresholds)
-results_df.to_csv(f'results/gru-threshold-results-{epochs}epochs-latest.csv', index=False, header=True)
+results_df.to_csv(f'results/testing-results-{epochs}epochs.csv', index=False, header=True)
 
 print('Results saved.')
 

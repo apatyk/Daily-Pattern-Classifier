@@ -9,6 +9,7 @@
 # Usage: python TrainDailyPatternRNN.py <batch_size> <num_recurrent_units> <num_training_epochs>
 
 import sys
+import os
 import random
 import numpy as np
 import tensorflow as tf
@@ -18,11 +19,16 @@ from sklearn.model_selection import KFold
 sys.path.append('../') # for .py files in ../common/
 import common.testing as testing
 
+if len(sys.argv) != 4:
+    sys.exit("Usage: python TrainDailyPatternRNN.py <batch_size> <num_recurrent_units> <num_training_epochs>")  
+
 # prepare for GPU workflow
 gpus = tf.config.list_physical_devices('GPU')
 for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
 logical_gpus = tf.config.list_logical_devices('GPU')
+# ignore extraneous warnings
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 seed = 42
 random.seed(seed)
@@ -31,16 +37,16 @@ tf.random.set_seed(seed)
 
 len_threshold = 850
 k = 5
-epochs = int(sys.argv[3]) #30
+epochs = int(sys.argv[3]) #50
 batch_size = int(sys.argv[1]) #64
 num_units = int(sys.argv[2]) #16
 num_subjects = 354
 n_timesteps = len_threshold
 
 # load numpy arrays from binary .npy files (created from .txt samples in LoadFiles script)
-raw_samples = np.load('200k-samples-W6/daily-samples.npy', allow_pickle=True)
-raw_labels = np.load('200k-samples-W6/daily-labels.npy', allow_pickle=True)
-all_filenames = np.load('200k-samples-W6/daily-filenames.npy').astype(int)
+raw_samples = np.load('../GenerateSamples/compressed-samples/daily-samples.npy', allow_pickle=True)
+raw_labels = np.load('../GenerateSamples/compressed-samples/daily-samples.npy', allow_pickle=True)
+all_filenames = np.load('../GenerateSamples/compressed-samples/daily-filenames.npy').astype(int)
 original_sample_lengths = np.array([len(sample) for sample in raw_samples])
 
 # pad or truncate data sequences accordingly
@@ -61,7 +67,8 @@ print(f'Training with batch_size = {batch_size}, units = {num_units}')
 for i, (training_subjects, testing_subjects) in enumerate(kfold.split(subjects)):
     ### TRAINING
     print(f'FOLD {i+1}') 
-    model_path = f'models/daily-pattern-b{batch_size}-u{num_units}-e{epochs}-fold{i+1}.h5'
+    os.makedirs('models', exist_ok=True)
+    model_path = f'models/daily-pattern-b{batch_size}-u{num_units}-e{epochs}-fold{i+1}'
     # retrieve only samples/labels corresponding to training fold
     print('Training...')
     training_bool = np.isin(all_filenames, training_subjects)
@@ -97,7 +104,7 @@ for i, (training_subjects, testing_subjects) in enumerate(kfold.split(subjects))
                         callbacks=[mcp_save])
     
     ### TESTING
-    print('Testing...')
+    print('Saving...')
 
     # retrieve only samples/labels corresponding to testing fold
     testing_bool = np.isin(all_filenames, testing_subjects)
@@ -113,6 +120,7 @@ for i, (training_subjects, testing_subjects) in enumerate(kfold.split(subjects))
     testing_probs = model.predict(testing_samples, batch_size=4096)
     
     # save data for post-hoc evaluation
+    os.makedirs('testing', exist_ok=True)
     np.save(f'testing/testing_lengths_{epochs}epochs_fold{i+1}.npy', testing_sample_lengths)
     np.save(f'testing/testing_probs_{epochs}epochs_fold{i+1}.npy', testing_probs)
     np.save(f'testing/testing_samples_{epochs}epochs_fold{i+1}.npy', tf.squeeze(testing_samples).numpy())
