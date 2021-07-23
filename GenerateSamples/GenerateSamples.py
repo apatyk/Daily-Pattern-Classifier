@@ -18,6 +18,7 @@ from tqdm import tqdm
 sys.path.append('../') # for .py files in ../common/
 import common.loadfile as loadfile
 import common.training as training
+import common.testing as testing
 
 if len(sys.argv) != 2:
     sys.exit("Usage: python GenerateSamples.py <window_length_in_min>")  
