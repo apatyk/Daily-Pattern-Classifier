@@ -40,7 +40,7 @@ train_step = int(train_stride_sec * 15)
 test_step = int(test_stride_sec * 15)
 start_time = datetime.now()
 
-save_dir = '/scratch2/apatyk/'
+save_dir = 'samples/'
 
 arr = ["echo -n 'PBS: node is '; cat $PBS_NODEFILE",\
       "echo PBS: job identifier is $PBS_JOBID",\
@@ -91,7 +91,7 @@ all_testing_normalized = loadfile.globalZscoreNormalize(all_testing_data, mean_v
 print("Data normalized.")
 
 # generate training samples from trained model
-num_samples = 200000
+num_samples = 1
 subjects = [*range(num_files)]
 num_subjects = len(subjects)
 num_iterations = math.ceil(num_samples / num_subjects)
@@ -113,7 +113,7 @@ for i in tqdm(range(num_iterations)):
         if raw_samples.size != 0:
             probs = model.predict(raw_samples, batch_size=1024)
             result = np.hstack((np.reshape(gt_labels,(1,-1)).T, probs))
-            np.savetxt(save_dir + f'training-samples/W{win_min}_P{s:03.0f}_I{i:03.0f}.txt', result)
+            np.savetxt(save_dir + f'W{win_min}_P{s:03.0f}_I{i:03.0f}.txt', result)
     
     tf.keras.backend.clear_session()
     del model
