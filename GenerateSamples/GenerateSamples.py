@@ -101,14 +101,14 @@ for i in tqdm(range(num_iterations)):
     start_time = datetime.now()
     
     # train model on all training data
-    H, model = training.train_model(training_samples_array, training_labels_array, all_training_normalized, win_len, epochs, save_dir + f'tmp_{win_min}min.h5')
+    H, model = training.trainModel(training_samples_array, training_labels_array, all_training_normalized, win_len, epochs, save_dir + f'tmp_{win_min}min.h5')
     
     # output P(E) and GT to text file for each recording using the trained model
     for s in subjects:
         subject_bool = np.isin(testing_samples_array[:,0], s)
         s_samples = testing_samples_array[subject_bool]
         s_labels = testing_labels_array[subject_bool]
-        raw_samples, gt_labels = training.get_raw_data(s_samples, s_labels, all_testing_normalized)
+        raw_samples, gt_labels = testing.get_raw_data(s_samples, s_labels, all_testing_normalized)
         if raw_samples.size != 0:
             probs = model.predict(raw_samples, batch_size=1024)
             result = np.hstack((np.reshape(gt_labels,(1,-1)).T, probs))
