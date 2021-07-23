@@ -41,6 +41,7 @@ test_step = int(test_stride_sec * 15)
 start_time = datetime.now()
 
 save_dir = 'samples/'
+os.makedirs(save_dir, exist_ok=True)
 
 arr = ["echo -n 'PBS: node is '; cat $PBS_NODEFILE",\
       "echo PBS: job identifier is $PBS_JOBID",\
