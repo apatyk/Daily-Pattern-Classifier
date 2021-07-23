@@ -92,7 +92,7 @@ all_testing_normalized = loadfile.globalZscoreNormalize(all_testing_data, mean_v
 print("Data normalized.")
 
 # generate training samples from trained model
-num_samples = 1
+num_samples = 200000
 subjects = [*range(num_files)]
 num_subjects = len(subjects)
 num_iterations = math.ceil(num_samples / num_subjects)
